@@ -141,10 +141,14 @@ const getEmployees = async (req, res) => {
         const limit = parseInt(size) ? +parseInt(size) : 5;
         const offset = parseInt(page) ? parseInt(page) * parseInt(size) : 0;
 
-        const findEmployees = await Employee.findAndCountAll({
+        const findEmployees = await Employee.findAll({
+            where: {
+                isDeleted: 0
+            },
             include: [
                 {
                     model: Tech,
+                    attributes: ['id', 'name', 'status'],
                     through: { attributes: [] },
                 }
             ],

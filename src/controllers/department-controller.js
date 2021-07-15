@@ -141,17 +141,23 @@ const getDepartments = async (req, res) => {
         const size = req.query.limit;
         const page = req.query.offset;
 
-        const limit = parseInt(size) ? +parseInt(size) : 5;
+        const limit = parseInt(size) ? +parseInt(size) : 3;
         const offset = parseInt(page) ? parseInt(page) * parseInt(size) : 0;
 
         const findDepartments = await Department.findAll({
             include: [
                 {
                     model: Admin,
-                    attributes: ['name', 'status']
+                    attributes: ['id', 'name', 'status']
                 },
                 {
                     model: Employee,
+                    attributes: ['id', 'name', 'idNumber'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Project,
+                    attributes: ['id', 'name', 'projectStatus', 'startDate'],
                     through: { attributes: [] }
                 }
             ],

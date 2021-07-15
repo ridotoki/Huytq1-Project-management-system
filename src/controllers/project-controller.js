@@ -159,17 +159,21 @@ const getProjects = async (req, res) => {
             include: [
                 {
                     model: Tech,
+                    attributes: ['id', 'name', 'status'],
                     through: { attributes: [] }
                 },
                 {
                     model: Employee,
+                    attributes: ['id', 'name', 'idNumber'],
                     through: { attributes: [] }
                 },
                 {
-                    model: ProjectType
+                    model: ProjectType,
+                    attributes: ['id', 'name', 'status'],
                 },
                 {
-                    model: Customer
+                    model: Customer,
+                    attributes: ['id', 'name'],
                 }
             ],
             limit: limit,

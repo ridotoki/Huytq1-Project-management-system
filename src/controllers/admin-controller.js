@@ -8,6 +8,8 @@ import bcrypt from 'bcrypt';
 
 const addAdmin = async (req, res) => {
     try {
+        const createBy = "Super Admin";
+
         const { username, password, employeeId } = req.body;
 
         const findEmployee = await Employee.findOne({
@@ -42,6 +44,7 @@ const addAdmin = async (req, res) => {
             password: hashedPassword,
             name: findEmployee.name,
             employeeId: employeeId,
+            createBy
         });
 
         return res.status(201).json({
@@ -109,7 +112,7 @@ const getAdmins = async (req, res) => {
     try {
         const currentAdmin = req.admin.id;
 
-        if(currentAdmin === null) {
+        if (currentAdmin === null) {
             return res.status(404).json({
                 message: "Admin not found, contact tech staff for instruction"
             });
@@ -130,7 +133,7 @@ const getAdmins = async (req, res) => {
         const size = req.query.limit;
         const page = req.query.offset;
 
-        const limit = parseInt(size) ? +parseInt(size) : 5;
+        const limit = parseInt(size) ? +parseInt(size) : 3;
         const offset = parseInt(page) ? parseInt(page) * parseInt(size) : 0;
 
         const findAdmins = await Admin.findAll({
@@ -163,7 +166,7 @@ const getAdmin = async (req, res) => {
     try {
         const currentAdmin = req.admin.id;
 
-        if(currentAdmin === null) {
+        if (currentAdmin === null) {
             return res.status(404).json({
                 message: "Admin not found, contact tech staff for instruction"
             });
@@ -218,7 +221,7 @@ const updateAdmin = async (req, res) => {
     try {
         const currentAdmin = req.admin.id;
 
-        if(currentAdmin === null) {
+        if (currentAdmin === null) {
             return res.status(404).json({
                 message: "Admin not found, contact tech staff for instruction"
             });
@@ -250,6 +253,8 @@ const updateAdmin = async (req, res) => {
             });
         }
 
+        const updateBy = findCurrentAdmin.id;
+
         const { username, password } = req.body;
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -257,6 +262,8 @@ const updateAdmin = async (req, res) => {
         const updateAdmin = await Admin.update({
             username,
             password: hashedPassword,
+            updateBy,
+            updateAt: Date.now()
         }, { where: { id: id } });
 
         return res.status(200).json({
@@ -277,7 +284,7 @@ const deleteAdmin = async (req, res) => {
     try {
         const currentAdmin = req.admin.id;
 
-        if(currentAdmin === null) {
+        if (currentAdmin === null) {
             return res.status(404).json({
                 message: "Admin not found, contact tech staff for instruction"
             });
@@ -327,7 +334,7 @@ const deleteAdmin = async (req, res) => {
             }
         });
 
-        if(checkAdminDepartment !== null){
+        if (checkAdminDepartment !== null) {
             return res.status(409).json({
                 message: `This admin is in ${checkAdminDepartment.name} department, please update this department with another admin`
             });
